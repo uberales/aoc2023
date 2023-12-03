@@ -28,9 +28,7 @@ for r in range(n_r):
         if char.isdigit():
             if n == '':
                 c_min = c
-                c_max = c
-            else:
-                c_max = c
+            c_max = c
             n += char
         else:
             if n != '':
@@ -71,10 +69,9 @@ nb_stats = {}
 for n in all_nbs:
     nbs = all_nbs[n]
     for nb in nbs:
-        if nb in nb_stats:
-            nb_stats[nb].append(n)
-        else:
-            nb_stats[nb] = [n]
+        if nb not in nb_stats:
+            nb_stats[nb] = []
+        nb_stats[nb].append(n)
 
 ratios = [nb_stats[nb][0][0] * nb_stats[nb][1][0] for nb in nb_stats if nb[0] == '*' and len(nb_stats[nb]) == 2]
      
