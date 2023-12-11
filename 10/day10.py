@@ -21,9 +21,11 @@ pipe_def = {
     '.': []
     }
 
-with open('test.txt', mode='r') as f:
+with open('input.txt', mode='r') as f:
     data = [list(l.strip()) for l in f.readlines()]
-    
+
+# part 1
+
 n_r, n_c = len(data), len(data[0])
 
 def add(c1, c2):
@@ -82,35 +84,24 @@ loop = traces[0][1]
 minima = [min([t[0][c] for t in traces]) for c in loop]
 print(max(minima))
 
-def winding(line, pt):
-    a = sub(pt, line[0])
-    b = sub(pt, line[1])
-    v = a[0]*b[1] - a[1]*b[0]
-    if v < 0:
-        return -1
-    if v > 0:
-        return 1
-    return 0
+# part 2
 
+def get_dir(loop, pt):
+    if pt not in loop:
+        return 0
+    i = loop.index(pt)
+    prv = loop[(i - 1) % len(loop)]
+    nxt = loop[(i + 1) % len(loop)]
+    dr = nxt[0] - prv[0]
+    return dr
 
-def horz_cross(r, c, line):
-    if line[0][1] == r and line[1][1] == r:
-        return False
-    if line[0][1] >= r and line[1][1] <= r and line[0][0] >= c and line[1][0] >=c:
-        return True
-    return False
-
-grid = np.zeros((n_r, n_c))
-
-n_l = len(loop)
-segments = [(loop[i], loop[(i+1) % n_l]) for i in range(n_l)]
-
+grid = np.zeros((n_r, n_c), dtype=int)
 
 for r in range(n_r):
     for c in range(n_c):
-        for i in range(len(loop) - 1):
-            line = loop[i:i+2]
-            if horz_cross(r, c, line):
-                print(r, line)
-                grid[r, c] += winding(line, (r, c))
-        print()
+        if (r, c) not in loop:
+            for cx in range(c+1,n_c):
+                pt = (r, cx)
+                d = get_dir(loop, pt)
+                grid[r, c] += d
+print(np.sum(abs(grid) > 0))
